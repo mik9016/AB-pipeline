@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+pnpm-debug.log
+*.log
+
+# Lock files committed intentionally; ignore only local overrides
+.pnpm-store/
