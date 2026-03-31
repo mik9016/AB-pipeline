@@ -7,7 +7,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate && \
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --network-timeout 10000
+RUN pnpm install
 
 COPY src/ ./src/
 COPY tsconfig.json ./
@@ -22,7 +22,7 @@ RUN corepack enable && corepack prepare pnpm@latest --activate && \
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --prod --network-timeout 10000
+RUN pnpm install --prod
 
 COPY --from=builder /app/dist ./dist/
 
