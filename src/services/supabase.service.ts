@@ -122,15 +122,19 @@ export function buildInsertData(params: {
 }
 
 export async function insertDocument(data: InsertDocumentData): Promise<void> {
-  const conflictCol = data.ab_nummer ? 'ab_nummer' : 'datei_original';
-  const url = `${config.supabaseUrl}/rest/v1/auftragseingang?on_conflict=${conflictCol}`;
+  // ABs: upsert on ab_nummer (full unique constraint exists)
+  // Non-ABs: plain insert, partial index on datei_original catches duplicates as 409
+  const isAb = !!data.ab_nummer;
+  const url = isAb
+    ? `${config.supabaseUrl}/rest/v1/auftragseingang?on_conflict=ab_nummer`
+    : `${config.supabaseUrl}/rest/v1/auftragseingang`;
 
   await withRetry(`insertDocument(${data.ab_nummer ?? data.datei_original})`, async () => {
     const response = await fetch(url, {
       method: 'POST',
       headers: supabaseHeaders({
         'Content-Type': 'application/json',
-        Prefer: 'resolution=merge-duplicates',
+        ...(isAb ? { Prefer: 'resolution=merge-duplicates' } : {}),
       }),
       body: JSON.stringify(data),
     });
