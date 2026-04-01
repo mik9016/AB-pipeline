@@ -4,7 +4,6 @@ export interface DocumentRequest {
   parentMessageId: string;
   attachmentId: string;
   originalFilename: string;
-  pdfBase64: string;
   emailFrom?: string;
   emailTo?: string;
 }
