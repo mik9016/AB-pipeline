@@ -58,8 +58,10 @@ export async function processDocument(job: DocumentJob): Promise<void> {
     const jahr = job.receivedAt.getFullYear();
     const rawName = classification.ab_nummer ?? job.originalFilename.replace(/\.pdf$/i, '');
     const safeFilename = rawName
-      .replace(/\.\./g, '_')
-      .replace(/[/\\?%*:|"<>\s]/g, '_')
+      .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue')
+      .replace(/Ä/g, 'Ae').replace(/Ö/g, 'Oe').replace(/Ü/g, 'Ue')
+      .replace(/ß/g, 'ss')
+      .replace(/[^a-zA-Z0-9._-]/g, '_')
       .slice(0, 200);
     const storagePath = `${jahr}/${safeFilename}.pdf`;
 
