@@ -122,7 +122,8 @@ export function buildInsertData(params: {
 }
 
 export async function insertDocument(data: InsertDocumentData): Promise<void> {
-  const url = `${config.supabaseUrl}/rest/v1/auftragseingang?on_conflict=ab_nummer`;
+  const conflictCol = data.ab_nummer ? 'ab_nummer' : 'datei_original';
+  const url = `${config.supabaseUrl}/rest/v1/auftragseingang?on_conflict=${conflictCol}`;
 
   await withRetry(`insertDocument(${data.ab_nummer ?? data.datei_original})`, async () => {
     const response = await fetch(url, {
@@ -134,6 +135,10 @@ export async function insertDocument(data: InsertDocumentData): Promise<void> {
       body: JSON.stringify(data),
     });
 
+    if (response.status === 409) {
+      // Duplicate — already stored, treat as success
+      return;
+    }
     if (!response.ok) {
       const body = await response.text().catch(() => '');
       throw new Error(
