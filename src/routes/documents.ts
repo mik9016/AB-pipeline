@@ -80,7 +80,8 @@ router.post('/', validateApiKey, (req: Request, res: Response, next: NextFunctio
   for (const doc of documents as DocumentRequest[]) {
     let pdfBuffer: Buffer;
     try {
-      pdfBuffer = Buffer.from(doc.pdfBase64, 'base64');
+      const raw = doc.pdfBase64.includes(',') ? doc.pdfBase64.split(',')[1] : doc.pdfBase64;
+      pdfBuffer = Buffer.from(raw, 'base64');
     } catch {
       next(new AppError(`Invalid base64 for document "${doc.originalFilename}"`, 400));
       return;
