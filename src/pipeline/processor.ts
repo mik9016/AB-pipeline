@@ -41,6 +41,7 @@ export async function processDocument(job: DocumentJob): Promise<void> {
   } catch (err) {
     // Classification errors do not fail the job — store as Unbekannt
     log.warn({ err, durationMs: elapsed(classifyStart) }, 'Classification error — using Unbekannt');
+    captureException(err);
     job.classification = {
       category: 'Unbekannt',
       confidence: 0,

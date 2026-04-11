@@ -134,7 +134,7 @@ export async function insertDocument(data: InsertDocumentData): Promise<void> {
       method: 'POST',
       headers: supabaseHeaders({
         'Content-Type': 'application/json',
-        ...(isAb ? { Prefer: 'resolution=merge-duplicates' } : {}),
+        ...(isAb ? { Prefer: 'resolution=ignore-duplicates' } : {}),
       }),
       body: JSON.stringify(data),
     });
